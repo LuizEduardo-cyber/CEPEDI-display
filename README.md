@@ -112,7 +112,7 @@ https://drive.google.com/file/d/1i8oDxxODmszay-6jJolS29nYXLZshbfd/view?usp=drive
 - alternar o estado do led vermelho com joystick.
   
  ## 🔗 Link do Vídeo de Funcionamento:
- https://drive.google.com/file/d/1JxK2GQnYCOw1poWcpsvKzCNGIU2aGyAA/view?usp=drivesdk
+ https://drive.google.com/file/d/1OJPM9WZ1L2_AfELuWRJ2WBmkdfB9j5mP/view?usp=drivesdk
 
  ## Contribuições 🤝
 
