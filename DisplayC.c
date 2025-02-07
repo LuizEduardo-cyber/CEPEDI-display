@@ -1,17 +1,3 @@
-/*
- * Por: Wilton Lacerda Silva
- *    Comunicação serial com I2C
- *  
- * Uso da interface I2C para comunicação com o Display OLED
- * 
- * Estudo da biblioteca ssd1306 com PicoW na Placa BitDogLab.
- *  
- * Este programa escreve uma mensagem no display OLED.
- * 
- * 
-*/
-
-
 #include <stdlib.h>
 #include<stdio.h>
 #include "pico/stdlib.h"
@@ -31,20 +17,20 @@
 #define endereco 0x3C
 static volatile char caractere;
 static volatile uint32_t last_time = 0; //para fazer o debounce
-bool est_led=0;
-bool est_led2=0;
+bool est_led=0; //para alternar led verde
+bool est_led2=0; //para alternar led blue
 static ssd1306_t ssd; // Inicializa a estrutura do display
 static bool cor;
 
-void gpio_irq_handler();
-void init_gpio();
+void gpio_irq_handler(); //função para interrupçao
+void init_gpio(); //inicia botoes e leds
 
 int main()
 {
   // I2C Initialisation. Using it at 400Khz.
   i2c_init(I2C_PORT, 400 * 1000);
-  stdio_init_all();
-  initNeoPixel(); 
+  stdio_init_all(); 
+  initNeoPixel(); //inicializa ws28122
   init_gpio();
  
   gpio_set_function(I2C_SDA, GPIO_FUNC_I2C); // Set the GPIO pin function to I2C
@@ -62,7 +48,7 @@ int main()
   ssd1306_fill(&ssd, false);
   ssd1306_send_data(&ssd);
   bool cor = true;
-  while (true)
+  while (true) //loop infinito
   {
     cor = !cor;
     // Atualiza o conteúdo do display com animações
@@ -70,7 +56,8 @@ int main()
     printf("digite um caratere \n");
     scanf(" %c",&caractere);
     
-    switch(caractere){
+    switch(caractere){ //um switch para caractere, cada caractere que digitar aparece no display e numero na matriz de led.
+      
       //letras minusculas
     case 'a':
     ssd1306_rect(&ssd, 20, 50, 30, 30, cor , !cor);
@@ -401,6 +388,19 @@ int main()
     ssd1306_draw_string(&ssd, "9", 61, 29);
     ssd1306_send_data(&ssd); // Atualiza o display
     break;
+     case '-':
+     default_();
+     printf("limpa matriz de led \n");
+     ssd1306_fill(&ssd, cor); // Limpa o display
+     ssd1306_draw_string(&ssd, "ws28122 desl", 3, 29);
+     ssd1306_send_data(&ssd); // Atualiza o display
+    break;
+     default:
+     printf("caractere invalido \n");
+     ssd1306_fill(&ssd, cor); // Limpa o display
+     ssd1306_draw_string(&ssd, "invalido", 3, 29);
+     ssd1306_send_data(&ssd); // Atualiza o display
+     break;
     }
     sleep_ms(1000);
   }
@@ -413,7 +413,7 @@ void gpio_irq_handler(uint gpio, uint32_t events){ //definido manualmente para t
   if (current_time - last_time > 200000) { //debounce
      last_time = current_time;
      switch(gpio){
-      case BUTTON_A:
+      case BUTTON_A: //caso for botao A ele entra nessa condição
        gpio_put(LED_GREEN,est_led);
       if(gpio_get(LED_GREEN)==1){
       printf("led verde foi aceso e display gerando informacao \n");
@@ -427,14 +427,14 @@ void gpio_irq_handler(uint gpio, uint32_t events){ //definido manualmente para t
       ssd1306_fill(&ssd, cor); // Limpa o display
       }
       break;
-      case BUTTON_B:
+      case BUTTON_B: //caso for botao B ele entra nessa condição
       gpio_put(LED_BLUE,est_led2);
-      if(gpio_get(LED_BLUE)==1){
+      if(gpio_get(LED_BLUE)==1){ //se led blue estiver aceso gera essas informações
       printf("led azul foi aceso e display gerando informacao \n");
       ssd1306_fill(&ssd, cor); // Limpa o display
       ssd1306_draw_string(&ssd, "Led 12 aceso", 3, 29);
       ssd1306_send_data(&ssd); // Atualiza o display
-      }else{
+      }else{ //se estiver apagado gera essas informações
       printf("led azul foi apagado e display gerando informacao \n");
       ssd1306_draw_string(&ssd, "Led 12 apagado", 3, 29);
       ssd1306_send_data(&ssd); // Atualiza o display
@@ -442,14 +442,14 @@ void gpio_irq_handler(uint gpio, uint32_t events){ //definido manualmente para t
       }
       break;
       default:
-      printf("pushbotton invalido \n");
+      printf("pushbotton invalido \n"); //caso nao seja nem botao a e nem b.
       break;
 
      }
   }
 }
 
-void init_gpio(){
+void init_gpio(){ //função de inicialização
   gpio_init(BUTTON_A);
   gpio_set_dir(BUTTON_A,GPIO_IN);
   gpio_pull_up(BUTTON_A);
