@@ -1,4 +1,4 @@
-# Projeto com uso do display, da matriz de led ws28122 e do push button   🚀
+# Projeto interface de comunicação serial com RP2040 e I2C 🚀
 
 Esse projeto faz uso do display que tem quase todos os caracteres incluidos, e faz uso da matriz de led que imprime os numeros de 0 a 9, e também o push button que tem como funcionalidade alternar o estado led RGB e informar o estado do led pelo serial monitor e pelo display.
 
